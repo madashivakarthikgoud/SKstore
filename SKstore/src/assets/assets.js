@@ -114,7 +114,7 @@ export const products = [
         price: 100,
         image: [p_img1],
         category: "Women",
-        subCategory: "Topwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L"],
         date: 1716634345448,
         bestseller: false
@@ -354,7 +354,7 @@ export const products = [
         price: 170,
         image: [p_img21],
         category: "Women",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716634345448,
         bestseller: false
@@ -438,7 +438,7 @@ export const products = [
         price: 230,
         image: [p_img28],
         category: "Men",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716642045448,
         bestseller: false
@@ -522,7 +522,7 @@ export const products = [
         price: 240,
         image: [p_img35],
         category: "Women",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716649745448,
         bestseller: false
@@ -534,7 +534,7 @@ export const products = [
         price: 270,
         image: [p_img36],
         category: "Women",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716650845448,
         bestseller: false
@@ -582,7 +582,7 @@ export const products = [
         price: 290,
         image: [p_img40],
         category: "Men",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716655245448,
         bestseller: false
@@ -630,7 +630,7 @@ export const products = [
         price: 310,
         image: [p_img44],
         category: "Women",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716659645448,
         bestseller: false
@@ -642,7 +642,7 @@ export const products = [
         price: 290,
         image: [p_img45],
         category: "Men",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716660745448,
         bestseller: false
@@ -654,7 +654,7 @@ export const products = [
         price: 320,
         image: [p_img46],
         category: "Men",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716661845448,
         bestseller: false
@@ -678,7 +678,7 @@ export const products = [
         price: 330,
         image: [p_img48],
         category: "Men",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716664045448,
         bestseller: false
@@ -713,7 +713,7 @@ export const products = [
         price: 320,
         image: [p_img51],
         category: "Women",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716667345448,
         bestseller: false
@@ -725,7 +725,7 @@ export const products = [
         price: 350,
         image: [p_img52],
         category: "Men",
-        subCategory: "Winterwear",
+        subCategory: "Co-ords",
         sizes: ["S", "M", "L", "XL"],
         date: 1716668445448,
         bestseller: false

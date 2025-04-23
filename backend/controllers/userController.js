@@ -3,86 +3,29 @@ import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Function to create a JWT token
-const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '1h', // Token expiration time
-  });
-};
+// Helper to create a JWT with an object payload and 1h expiry
+const createToken = (payload) =>
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-// Route for user login
+/** POST /api/login */
 const loginUser = async (req, res) => {
-  try{
-    const{email, password} = req.body;
-    // Check if email and password are provided and are strings
+  try {
+    const { email, password } = req.body;
+
+    // Find user by email
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.json({ success: false, message: 'User not found' });
     }
+
+    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
-
-    if (isMatch) {
-        const token = createToken(user._id);
-        res.json({ success: true, token });
-    }
-    else{
-        res.json({ success: false, message: 'Invalid credentials' });
-    }
-  }catch{
-    console.error(error);
-    res.json({ success: false, message: error.message });
-  }
-};
-
-// Route for user registration
-const registerUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    // Check if email and password are provided and are strings
-    if (!email || typeof email !== 'string') {
-      return res.json({ success: false, message: 'Email is required and must be a string' });
-    }
-    if (!password || typeof password !== 'string') {
-      return res.json({ success: false, message: 'Password is required and must be a string' });
+    if (!isMatch) {
+      return res.json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Check if user already exists
-    const exists = await userModel.findOne({ email });
-    if (exists) {
-      return res.json({ success: false, message: 'User already exists' });
-    }
-
-    // Validate email format
-    if (!validator.isEmail(email)) {
-      return res.json({ success: false, message: 'Invalid email format' });
-    }
-
-    // Validate password length
-    if (password.length < 6) {
-      return res.json({
-        success: false,
-        message: 'Password must be at least 6 characters long',
-      });
-    }
-
-    // Hash the user's password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create a new user instance
-    const newUser = new userModel({
-      name,
-      email,
-      password: hashedPassword,
-    });
-
-    // Save the user to the database
-    const user = await newUser.save();
-
-    // Generate a token for the user
-    const token = createToken(user._id);
-
+    // Issue token
+    const token = createToken({ id: user._id });
     res.json({ success: true, token });
   } catch (error) {
     console.error(error);
@@ -90,17 +33,72 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Route for admin login
-const adminLogin = async (req, res) => {
-  try{
-    const{email, password} = req.body;
-    if(email == process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD){
-      const token =jwt.sign(email+password, process.env.JWT_SECRET);
-      res.json({ success: true, token });
-    }else{
-      res.json({ success: false, message: 'Invalid credentials' });
+/** POST /api/register */
+const registerUser = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Basic validation
+    if (!email || typeof email !== 'string') {
+      return res.json({ success: false, message: 'Email is required and must be a string' });
     }
-  }catch(error){
+    if (!validator.isEmail(email)) {
+      return res.json({ success: false, message: 'Invalid email format' });
+    }
+    if (!password || typeof password !== 'string') {
+      return res.json({ success: false, message: 'Password is required and must be a string' });
+    }
+    if (password.length < 6) {
+      return res.json({
+        success: false,
+        message: 'Password must be at least 6 characters long',
+      });
+    }
+
+    // Check for existing user
+    const exists = await userModel.findOne({ email });
+    if (exists) {
+      return res.json({ success: false, message: 'User already exists' });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create and save user
+    const newUser = new userModel({
+      name,
+      email,
+      password: hashedPassword,
+    });
+    const user = await newUser.save();
+
+    // Issue token
+    const token = createToken({ id: user._id });
+    res.json({ success: true, token });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+/** POST /api/admin/login */
+const adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Verify against env vars
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      // Issue admin token with role claim
+      const token = createToken({ role: 'admin', email });
+      return res.json({ success: true, token });
+    }
+
+    return res.json({ success: false, message: 'Invalid credentials' });
+  } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
