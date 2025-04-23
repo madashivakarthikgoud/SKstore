@@ -8,30 +8,45 @@ export const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [subCategory, setSubCategory] = useState([]);
+  const [category, setCategory] = useState(new Set()); // Use Set for uniqueness
+  const [subCategory, setSubCategory] = useState(new Set()); // Use Set for uniqueness
   const [sortType, setSortType] = useState('relevant');
+  const [isLoading, setIsLoading] = useState(false); // Loading state for filtering
 
   // Toggle Category
   const toggleCategory = (e) => {
     const value = e.target.value;
-    setCategory((prev) =>
-      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
-    );
+    setCategory((prev) => {
+      const newCategory = new Set(prev);
+      if (newCategory.has(value)) {
+        newCategory.delete(value);
+      } else {
+        newCategory.add(value);
+      }
+      return newCategory;
+    });
   };
 
   // Toggle SubCategory
   const toggleSubCategory = (e) => {
     const value = e.target.value;
-    setSubCategory((prev) =>
-      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
-    );
+    setSubCategory((prev) => {
+      const newSubCategory = new Set(prev);
+      if (newSubCategory.has(value)) {
+        newSubCategory.delete(value);
+      } else {
+        newSubCategory.add(value);
+      }
+      return newSubCategory;
+    });
   };
 
   // Apply Filters
   const applyFilter = () => {
+    setIsLoading(true); // Start loading
+
     let filtered = [...products];
-  
+
     // If search is active and there is a search term, filter based on the search term
     if (showSearch && search) {
       filtered = filtered.filter((item) =>
@@ -40,22 +55,20 @@ export const Collection = () => {
         item.subCategory.toLowerCase().includes(search.toLowerCase()) // Check subcategory
       );
     }
-  
-    // If categories are selected, filter by category first
-    if (category.length > 0) {
-      filtered = filtered.filter((item) => category.includes(item.category));
+
+    // If categories are selected, filter by category
+    if (category.size > 0) {
+      filtered = filtered.filter((item) => category.has(item.category));
     }
-  
+
     // If subcategories are selected, filter by subcategory
-    if (subCategory.length > 0) {
-      filtered = filtered.filter((item) => subCategory.includes(item.subCategory));
+    if (subCategory.size > 0) {
+      filtered = filtered.filter((item) => subCategory.has(item.subCategory));
     }
-  
+
     // Apply sorting after filtering
     sortProducts(filtered);
   };
-  
-
 
   // Sort Products
   const sortProducts = (filteredProducts) => {
@@ -75,6 +88,7 @@ export const Collection = () => {
     }
 
     setFilterProducts(sortedProducts);
+    setIsLoading(false); // Stop loading once sorting is done
   };
 
   // Effect: Initialize products
@@ -82,7 +96,7 @@ export const Collection = () => {
     setFilterProducts(products); // Show all products initially
   }, [products]);
 
-  // Effect: Reapply filters when category, subCategory, search or showSearch changes
+  // Effect: Reapply filters when category, subCategory, search, or showSearch changes
   useEffect(() => {
     applyFilter();
   }, [category, subCategory, search, showSearch]);
@@ -117,13 +131,31 @@ export const Collection = () => {
           <p className="mb-3 text-sm font-medium">CATEGORIES</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             <p className="flex gap-2">
-              <input className="w-3" type="checkbox" value="Men" onChange={toggleCategory} />Men
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Men"
+                onChange={toggleCategory}
+              />
+              <label>Men</label>
             </p>
             <p className="flex gap-2">
-              <input className="w-3" type="checkbox" value="Women" onChange={toggleCategory} />Women
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Women"
+                onChange={toggleCategory}
+              />
+              <label>Women</label>
             </p>
             <p className="flex gap-2">
-              <input className="w-3" type="checkbox" value="Kids" onChange={toggleCategory} />Kids
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Kids"
+                onChange={toggleCategory}
+              />
+              <label>Kids</label>
             </p>
           </div>
         </div>
@@ -135,8 +167,13 @@ export const Collection = () => {
           <p className="mb-3 text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             <p className="flex gap-2">
-              <input className="w-3" type="checkbox" value="Topwear" onChange={toggleSubCategory} />
-              Topwear
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Topwear"
+                onChange={toggleSubCategory}
+              />
+              <label>Topwear</label>
             </p>
             <p className="flex gap-2">
               <input
@@ -145,16 +182,16 @@ export const Collection = () => {
                 value="Bottomwear"
                 onChange={toggleSubCategory}
               />
-              Bottomwear
+              <label>Bottomwear</label>
             </p>
             <p className="flex gap-2">
               <input
                 className="w-3"
                 type="checkbox"
-                value="Winterwear"
+                value="Co-ords"
                 onChange={toggleSubCategory}
               />
-              Winterwear
+              <label>Co-ords</label>
             </p>
           </div>
         </div>
@@ -175,18 +212,22 @@ export const Collection = () => {
           </select>
         </div>
 
-        {/* Map Products */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-          {filterProducts.map((item, index) => (
-            <ProductItem
-              key={index}
-              name={item.name}
-              id={item._id}
-              price={item.price}
-              image={item.image}
-            />
-          ))}
-        </div>
+        {/* Show Loading Indicator */}
+        {isLoading ? (
+          <div className="flex justify-center py-10">Loading...</div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+            {filterProducts.map((item, index) => (
+              <ProductItem
+                key={index}
+                name={item.name}
+                id={item._id}
+                price={item.price}
+                images={item.images} // Correctly pass images prop here
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,35 +1,34 @@
+// File: server.js
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import connectDB from './config/mongodb.js';
-import connectCloudinary from './config/cloudinary.js'; // Ensure this import is correct
-import userRouter from './routes/userRoute.js';
-import productRouter from './routes/productRoute.js'; // Import product routes
-
 import dotenv from 'dotenv';
+import cartRouter from './routes/cartRoute.js';
 dotenv.config();
 
+import connectDB from './config/mongodb.js';
+import { connectCloudinary } from './config/cloudinary.js'; // Using the named export
 
-// App Config
+import userRouter from './routes/userRoute.js';
+import productRouter from './routes/productRoute.js';
+
 const app = express();
 const port = process.env.PORT || 4000;
 
-// Middlewares
 app.use(express.json());
 app.use(cors());
 
-// API endpoints
-app.use('/api/user',userRouter); // User routes
-app.use('/api/product', productRouter); // Product routes
+app.use('/api/user', userRouter);
+app.use('/api/product', productRouter);
+app.use('/api/cart', cartRouter);
 
 app.get('/', (req, res) => {
   res.send('API Working');
 });
 
-// Connect to MongoDB and Cloudinary, then start the server
 connectDB()
   .then(() => {
-    connectCloudinary(); // Configure Cloudinary
+    connectCloudinary(); // Configure Cloudinary with the updated env keys
     app.listen(port, () => console.log(`Server started on port: ${port}`));
   })
   .catch(err => {
