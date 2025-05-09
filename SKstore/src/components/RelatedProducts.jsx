@@ -17,10 +17,6 @@ const RelatedProducts = ({ category, subCategory }) => {
     }
   }, [category, subCategory, products]);
 
-  // Debug: Log the related products to check if images are being passed correctly
-  useEffect(() => {
-    console.log("Related Products:", related);
-  }, [related]);
 
   return (
     <div className="my-24">
