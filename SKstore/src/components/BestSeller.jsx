@@ -15,11 +15,6 @@ const BestSeller = () => {
     }
   }, [products]);
 
-  // Debug: Log the bestSeller array to check images
-  useEffect(() => {
-    console.log("Best Seller Products:", bestSeller);
-  }, [bestSeller]);
-
   return (
     <div className="my-10">
       <div className="text-center text-3xl py-8">
