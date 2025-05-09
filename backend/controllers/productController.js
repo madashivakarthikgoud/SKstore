@@ -31,8 +31,6 @@ const addProduct = async (req, res) => {
     // Filter out any undefined files
     const images = [image1, image2, image3, image4].filter(Boolean);
 
-    console.log("Uploading images:", images.map(img => img.originalname));
-
     // Use the file buffer (because you're using memoryStorage) to upload each image
     const imageUrls = await Promise.all(
       images.map(img => uploadToCloudinary(img.buffer))
