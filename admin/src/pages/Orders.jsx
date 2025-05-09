@@ -85,6 +85,8 @@ export default function Orders({ token }) {
         <h3 className="text-3xl font-bold">Orders</h3>
         <div className="flex flex-wrap gap-3">
           <select
+            name="statusFilter"
+            id="statusFilter"
             value={statusFilter}
             onChange={e => {
               setStatusFilter(e.target.value);
