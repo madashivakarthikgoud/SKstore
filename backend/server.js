@@ -1,3 +1,5 @@
+// File: server.js
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -10,21 +12,24 @@ import userRouter from './routes/userRoute.js';
 import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
-import adminRouter from './routes/adminRoute.js'; // Import the new admin route
+import adminRouter from './routes/adminRoute.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 4000;
 
-// ✅ CORS configuration
-const allowedOrigins = ['https://skstore-admin.onrender.com'];
+// ✅ CORS configuration: allow both admin and user frontends
+const allowedOrigins = [
+  'https://skstore-admin.onrender.com',
+  'https://skstore.onrender.com'
+];
 
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'token'], // ← include your custom "token" header too
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'token'],
 }));
 
 // Middleware
@@ -35,7 +40,7 @@ app.use('/api/user',    userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart',    cartRouter);
 app.use('/api/order',   orderRouter);
-app.use('/api/admin',   adminRouter); // Mount the admin route
+app.use('/api/admin',   adminRouter);
 
 // Default route
 app.get('/', (req, res) => {
