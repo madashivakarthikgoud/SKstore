@@ -139,7 +139,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 📬 Contact
 
-For questions, feedback, or support, open an [issue](https://github.com/madashivakarthikgoud/SKstore/issues) or reach out at [your-email@example.com].
+For questions, feedback, or support, open an [issue](https://github.com/madashivakarthikgoud/SKstore/issues) or reach out at [madashivakarthikgoud@gmail.com].
 
 ---
 
